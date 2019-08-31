@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Entity.DBModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -14,6 +15,13 @@ namespace API.Controllers
 
     public class BaseController : Controller
     {
+        public readonly BankingSystemContext _context = null;
+
+        public BaseController(BankingSystemContext context)
+        {
+            _context = context;
+        }
+
         internal static IActionResult CreateResponse(int statusCode, object result = null, string error = null)
         {
             var response = new Response() { Result = result, Error = error };

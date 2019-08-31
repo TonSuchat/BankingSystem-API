@@ -18,6 +18,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Logger;
 using Service;
+using Service.Interfaces;
+using Service.Services;
 
 namespace API
 {
@@ -40,6 +42,9 @@ namespace API
             services.AddDbContext<BankingSystemContext>(options => options.UseSqlServer(Configuration["ConnectionString"]));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // add dependency injections
+            AddServicesScope(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +64,11 @@ namespace API
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void AddServicesScope(IServiceCollection services)
+        {
+            services.AddScoped<IAccountService, AccountService>();
         }
         
     }
