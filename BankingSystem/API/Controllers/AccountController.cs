@@ -21,11 +21,17 @@ namespace API.Controllers
         public async Task<IActionResult> CreateAccount([FromBody] Customer customer, [FromQuery] decimal initialMoney = 0)
         {
             int statusCode = 200;
-            string result = "";
+            Account result = null;
             string error = null;
             try
             {
                 result = await _accountService.CreateAccount(customer, initialMoney);
+            }
+            catch(ArgumentException e)
+            {
+                Log.Error($"Failed to create an account", e);
+                statusCode = 400;
+                error = e.Message;
             }
             catch (Exception e)
             {
@@ -35,5 +41,6 @@ namespace API.Controllers
             }
             return CreateResponse(statusCode, result, error);
         }
+
     }
 }

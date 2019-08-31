@@ -8,6 +8,6 @@ namespace Service.Interfaces
 {
     public interface IAccountService
     {
-        Task<string> CreateAccount(Customer customer, decimal initialMoney = 0);
+        Task<Account> CreateAccount(Customer customer, decimal initialMoney = 0);
     }
 }

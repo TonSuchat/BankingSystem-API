@@ -1,18 +1,24 @@
 ﻿using API.Controllers;
 using Entity.DBModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Service.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace UnitTest.Controllers
 {
     public class AccountControllerTest : BaseUnitTest
     {
+
+        #region Seed-Methods
+        private void Seed_Create_An_Account_Existing_Customer_Success(BankingSystemContext context, Customer customer)
+        {
+            // create customer
+            context.Customers.Add(customer);
+            context.SaveChanges();
+        }
+        #endregion
 
         [Fact]
         public async Task Create_An_Account_Success()
@@ -31,7 +37,37 @@ namespace UnitTest.Controllers
                 Assert.NotNull(jsonResult);
                 Assert.Equal(200, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
-                Assert.NotEqual(string.IsNullOrEmpty(""), value.Result);
+                Assert.NotNull(value.Result);
+                var account = value.Result as Account;
+                Assert.NotNull(account.IBAN);
+                Assert.Equal(500, account.TotalAmount);
+            }
+        }
+
+        [Fact]
+        public async Task Create_An_Account_Existing_Customer_Success()
+        {
+            // ARRANGE
+            var options = GetInMemoryOptions("Create_An_Account_Existing_Customer_Success");
+            var customer = new Customer() { FirstName = "John", LastName = "Wick" };
+            using (var context = new BankingSystemContext(options))
+            {
+                Seed_Create_An_Account_Existing_Customer_Success(context, customer);
+                SeedIBANMasterData(context);
+                var accountService = new AccountService(context);
+                var controller = new AccountController(context, accountService);
+                // ACT
+                var jsonResult = await controller.CreateAccount(customer, 1500) as JsonResult;
+                // ASSERT
+                Assert.NotNull(jsonResult);
+                Assert.Equal(200, jsonResult.StatusCode.GetValueOrDefault());
+                var value = jsonResult.Value as Response;
+                Assert.NotNull(value.Result);
+                var account = value.Result as Account;
+                Assert.NotNull(account.IBAN);
+                Assert.Equal(1500, account.TotalAmount);
+                var totalCustomer = context.Customers.Count();
+                Assert.Equal(1, totalCustomer);
             }
         }
 
@@ -49,7 +85,7 @@ namespace UnitTest.Controllers
                 var jsonResult = await controller.CreateAccount(null) as JsonResult;
                 // ASSERT
                 Assert.NotNull(jsonResult);
-                Assert.Equal(500, jsonResult.StatusCode.GetValueOrDefault());
+                Assert.Equal(400, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
                 Assert.Equal(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL, value.Error);
             }

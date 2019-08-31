@@ -1,5 +1,4 @@
 ﻿using Entity.DBModels;
-using Logger;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using System;
@@ -19,7 +18,7 @@ namespace Service.Services
             _context = context;
         }
 
-        public async Task<string> CreateAccount(Customer customer, decimal initialMoney = 0)
+        public async Task<Account> CreateAccount(Customer customer, decimal initialMoney = 0)
         {
             if (customer == null) throw new ArgumentException(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL);
             var masterIBAN = await _context.MasterIBANs.FirstOrDefaultAsync(m => !m.Used);
@@ -28,15 +27,21 @@ namespace Service.Services
             {
                 try
                 {
-                    // add customer
-                    _context.Customers.Add(customer);
-                    await _context.SaveChangesAsync();
+                    // check if customer is existing
+                    var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.FirstName == customer.FirstName && c.LastName == customer.LastName);
+                    if (existingCustomer == null)
+                    {
+                        // add customer
+                        _context.Customers.Add(customer);
+                        await _context.SaveChangesAsync();
+                    }
+                    else customer = existingCustomer;
                     // add account
                     var account = new Account() { CustomerId = customer.Id, IBAN = masterIBAN.IBAN, TotalAmount = initialMoney };
                     _context.Accounts.Add(account);
                     await _context.SaveChangesAsync();
                     transaction.Commit();
-                    return account.IBAN;
+                    return account;
                 }
                 catch (Exception ex)
                 {
