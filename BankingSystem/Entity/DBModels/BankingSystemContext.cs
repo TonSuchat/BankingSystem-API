@@ -19,6 +19,10 @@ namespace Entity.DBModels
         {
             modelBuilder.Entity<Transaction>().HasOne(t => t.TransferAccount).WithMany(a => a.TransferTransactions).HasForeignKey(t => t.TransferIBAN);
             modelBuilder.Entity<Transaction>().HasOne(t => t.ReceiveAccount).WithMany(a => a.ReceivedTransactions).HasForeignKey(t => t.ReceiveIBAN);
+
+            modelBuilder.Entity<Account>().Property(a => a.CreatedOn).HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Customer>().Property(c => c.CreatedOn).HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Transaction>().Property(t => t.CreatedOn).HasDefaultValueSql("getdate()");
         }
     }
 }
