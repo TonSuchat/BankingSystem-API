@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 using Entity.DBModels;
+using log4net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logger;
 using Service;
 
 namespace API
@@ -28,6 +33,9 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // init log4net configuration
+            Log.Init();
+
             // add db context dependency
             services.AddDbContext<BankingSystemContext>(options => options.UseSqlServer(Configuration["ConnectionString"]));
 
@@ -52,5 +60,6 @@ namespace API
             app.UseHttpsRedirection();
             app.UseMvc();
         }
+        
     }
 }
