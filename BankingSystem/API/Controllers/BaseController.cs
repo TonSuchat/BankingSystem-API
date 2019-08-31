@@ -11,6 +11,7 @@ namespace API.Controllers
     {
         public object Result { get; set; }
         public string Error { get; set; }
+        public int StatusCode { get; set; }
     }
 
     public class BaseController : Controller
@@ -24,7 +25,7 @@ namespace API.Controllers
 
         internal static IActionResult CreateResponse(int statusCode, object result = null, string error = null)
         {
-            var response = new Response() { Result = result, Error = error };
+            var response = new Response() { Result = result, Error = error, StatusCode = statusCode };
             return new JsonResult(response) { StatusCode = statusCode };
         }
     }

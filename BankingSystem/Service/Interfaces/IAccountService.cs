@@ -1,13 +1,11 @@
 ﻿using Entity.DBModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using static Entity.Models.AccountModels;
 
 namespace Service.Interfaces
 {
     public interface IAccountService
     {
-        Task<Account> CreateAccount(Customer customer, decimal initialMoney = 0);
+        Task<CreateAccountResponse> CreateAccount(Customer customer, decimal initialMoney = 0);
     }
 }

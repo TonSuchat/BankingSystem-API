@@ -4,10 +4,12 @@ using Entity.DBModels;
 using Logger;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using static Entity.Models.AccountModels;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/[controller]/[action]")]
     public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
@@ -17,17 +19,17 @@ namespace API.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost()]
+        [HttpPost(), ActionName("CreateAccount")]
         public async Task<IActionResult> CreateAccount([FromBody] Customer customer, [FromQuery] decimal initialMoney = 0)
         {
             int statusCode = 200;
-            Account result = null;
+            CreateAccountResponse result = null;
             string error = null;
             try
             {
                 result = await _accountService.CreateAccount(customer, initialMoney);
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 Log.Error($"Failed to create an account", e);
                 statusCode = 400;

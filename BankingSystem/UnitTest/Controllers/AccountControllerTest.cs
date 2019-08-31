@@ -5,6 +5,7 @@ using Service.Services;
 using Xunit;
 using System.Threading.Tasks;
 using System.Linq;
+using static Entity.Models.AccountModels;
 
 namespace UnitTest.Controllers
 {
@@ -38,9 +39,9 @@ namespace UnitTest.Controllers
                 Assert.Equal(200, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
                 Assert.NotNull(value.Result);
-                var account = value.Result as Account;
-                Assert.NotNull(account.IBAN);
-                Assert.Equal(500, account.TotalAmount);
+                var createAccountResponse = value.Result as CreateAccountResponse;
+                Assert.NotNull(createAccountResponse.IBAN);
+                Assert.Equal(500, createAccountResponse.TotalAmount);
             }
         }
 
@@ -63,9 +64,9 @@ namespace UnitTest.Controllers
                 Assert.Equal(200, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
                 Assert.NotNull(value.Result);
-                var account = value.Result as Account;
-                Assert.NotNull(account.IBAN);
-                Assert.Equal(1500, account.TotalAmount);
+                var createAccountResponse = value.Result as CreateAccountResponse;
+                Assert.NotNull(createAccountResponse.IBAN);
+                Assert.Equal(1500, createAccountResponse.TotalAmount);
                 var totalCustomer = context.Customers.Count();
                 Assert.Equal(1, totalCustomer);
             }

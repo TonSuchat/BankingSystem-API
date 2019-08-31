@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text;
+using static Entity.Models.AccountModels;
 
 namespace Service.Services
 {
@@ -18,7 +19,7 @@ namespace Service.Services
             _context = context;
         }
 
-        public async Task<Account> CreateAccount(Customer customer, decimal initialMoney = 0)
+        public async Task<CreateAccountResponse> CreateAccount(Customer customer, decimal initialMoney = 0)
         {
             if (customer == null) throw new ArgumentException(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL);
             var masterIBAN = await _context.MasterIBANs.FirstOrDefaultAsync(m => !m.Used);
@@ -39,9 +40,12 @@ namespace Service.Services
                     // add account
                     var account = new Account() { CustomerId = customer.Id, IBAN = masterIBAN.IBAN, TotalAmount = initialMoney };
                     _context.Accounts.Add(account);
+                    // flag used account number
+                    masterIBAN.Used = true;
+                    _context.Entry(masterIBAN).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
                     transaction.Commit();
-                    return account;
+                    return new CreateAccountResponse(account, customer);
                 }
                 catch (Exception ex)
                 {
@@ -50,6 +54,6 @@ namespace Service.Services
                 }
             }
         }
-    
+
     }
 }
