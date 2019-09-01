@@ -21,7 +21,7 @@ namespace Service.Services
 
         public async Task<CreateAccountResponse> CreateAccount(Customer customer, decimal initialMoney = 0)
         {
-            if (customer == null) throw new ArgumentException(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL);
+            if (customer == null || string.IsNullOrEmpty(customer.FirstName) || string.IsNullOrEmpty(customer.LastName)) throw new ArgumentException(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL);
             var masterIBAN = await _context.MasterIBANs.FirstOrDefaultAsync(m => !m.Used);
             if (masterIBAN == null) throw new Exception(Entity.Constant.CREATEACCOUNT_NO_IBAN_LEFT);
             using (var transaction = _context.Database.BeginTransaction())
