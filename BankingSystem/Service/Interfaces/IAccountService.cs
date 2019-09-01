@@ -8,7 +8,7 @@ namespace Service.Interfaces
     public interface IAccountService
     {
         Task<CreateAccountResponse> CreateAccount(Customer customer, decimal initialMoney = 0);
-        Task<Account> GetAccount(string iban);
+        Task<Account> GetAccount(string iban, bool includeCustomer = false);
         Task<IList<Account>> GetAccounts();
     }
 }

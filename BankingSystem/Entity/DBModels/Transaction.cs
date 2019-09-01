@@ -34,5 +34,15 @@ namespace Entity.DBModels
             Fee = fee;
             Remark = remark;
         }
+
+        public void Transfer(string transferIBAN, string receiveIBAN, decimal amount, string remark = null)
+        {
+            Type = TransactionType.TRANSFER;
+            TransferIBAN = transferIBAN;
+            ReceiveIBAN = receiveIBAN;
+            Amount = amount;
+            Remark = remark;
+        }
+
     }
 }

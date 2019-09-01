@@ -50,10 +50,11 @@ namespace Service.Services
             }
         }
 
-        public async Task<Account> GetAccount(string iban)
+        public async Task<Account> GetAccount(string iban, bool includeCustomer = false)
         {
             if (string.IsNullOrEmpty(iban)) throw new ArgumentException(Entity.Constant.IBAN_IS_NULL);
-            return await _context.Accounts.FirstOrDefaultAsync(a => a.IBAN == iban && a.IsActive);
+            if(includeCustomer) return await _context.Accounts.Include(a => a.Customer).FirstOrDefaultAsync(a => a.IBAN == iban && a.IsActive);
+            else return await _context.Accounts.FirstOrDefaultAsync(a => a.IBAN == iban && a.IsActive);
         }
 
         public async Task<IList<Account>> GetAccounts()

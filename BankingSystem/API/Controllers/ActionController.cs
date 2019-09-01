@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Entity.DBModels;
 using Logger;
@@ -47,5 +45,32 @@ namespace API.Controllers
             }
             return CreateResponse(statusCode, result, error);
         }
+
+
+        [HttpPost(), ActionName("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] TransferReqeuest request)
+        {
+            int statusCode = 200;
+            TransferResponse result = null;
+            string error = null;
+            try
+            {
+                result = await _actionService.Transfer(request.FromIBAN, request.ToIBAN, request.Amount, request.Remark);
+            }
+            catch (ArgumentException e)
+            {
+                Log.Error($"Failed to transfer", e);
+                statusCode = 400;
+                error = e.Message;
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Failed to transfer", e);
+                statusCode = 500;
+                error = e.Message;
+            }
+            return CreateResponse(statusCode, result, error);
+        }
+
     }
 }

@@ -1,7 +1,4 @@
 ﻿using Entity.DBModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Entity.Models
 {
@@ -33,5 +30,36 @@ namespace Entity.Models
             public decimal Fee { get; set; }
             public decimal TotalAmount { get; set; }
         }
+
+        public class TransferReqeuest
+        {
+            public string FromIBAN { get; set; }
+            public string ToIBAN { get; set; }
+            public decimal Amount { get; set; }
+            public string Remark { get; set; }
+        }
+
+        public class TransferResponse
+        {
+            public TransferResponse() { }
+
+            public TransferResponse(Transaction transaction, Account transferAccount, Account receivedAccount)
+            {
+                TransactionId = transaction.Id;
+                TransferIBAN = transferAccount.IBAN;
+                ReceiveIBAN = receivedAccount.IBAN;
+                ReceiveCustomerFullName = (receivedAccount.Customer != null) ? $"{receivedAccount.Customer.FirstName} {receivedAccount.Customer.LastName}" : "-";
+                Amount = transaction.Amount;
+                Fee = transaction.Fee;
+            }
+
+            public int TransactionId { get; set; }
+            public string TransferIBAN { get; set; }
+            public string ReceiveIBAN { get; set; }
+            public string ReceiveCustomerFullName { get; set; }
+            public decimal Amount { get; set; }
+            public decimal Fee { get; set; }
+        }
+
     }
 }

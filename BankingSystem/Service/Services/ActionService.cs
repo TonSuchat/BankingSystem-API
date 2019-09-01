@@ -1,11 +1,7 @@
 ﻿using Entity.DBModels;
-using Entity.Models;
 using Service.Interfaces;
 using System;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Entity.Models.ActionModels;
 
@@ -54,5 +50,44 @@ namespace Service.Services
                 }
             }
         }
+
+        public async Task<TransferResponse> Transfer(string fromIBAN, string toIBAN, decimal amount, string remark = null)
+        {
+            if (string.IsNullOrEmpty(fromIBAN) || string.IsNullOrEmpty(toIBAN)) throw new ArgumentException(Entity.Constant.IBAN_IS_NULL);
+            if (amount <= 0) throw new ArgumentException(Entity.Constant.TRANSFER_ZERO_MONEY);
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // find transfer account
+                    var transferAccount = await _accountService.GetAccount(fromIBAN);
+                    if (transferAccount == null) throw new ArgumentException(Entity.Constant.NOT_FOUND_TRANSFER_ACCOUNT);
+                    // find receive account
+                    var receiveAccount = await _accountService.GetAccount(toIBAN, true);
+                    if (receiveAccount == null) throw new ArgumentException(Entity.Constant.NOT_FOUND_RECEIVE_ACCOUNT);
+                    // check transfer money is enough
+                    if (transferAccount.TotalAmount < amount) throw new ArgumentException(Entity.Constant.TRANSFER_MONEY_NOT_ENOUGH);
+                    // deduct money from transfer account
+                    transferAccount.TotalAmount -= amount;
+                    // add money into receive account
+                    receiveAccount.TotalAmount += amount;
+                    _context.Entry(transferAccount).State = EntityState.Modified;
+                    _context.Entry(receiveAccount).State = EntityState.Modified;
+                    // add new transaction
+                    var transferTransaction = new Transaction();
+                    transferTransaction.Transfer(fromIBAN, toIBAN, amount, remark);
+                    _context.Transactions.Add(transferTransaction);
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+                    return new TransferResponse(transferTransaction, transferAccount, receiveAccount);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+        }
+
     }
 }

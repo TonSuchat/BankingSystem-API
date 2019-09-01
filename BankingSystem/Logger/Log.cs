@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Xml;
 using log4net;
 using log4net.Config;
 
@@ -15,11 +14,6 @@ namespace Logger
 
         public static void Init()
         {
-            //XmlDocument log4netConfig = new XmlDocument();
-            //log4netConfig.Load(File.OpenRead("log4net.config"));
-            //var repo = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            //log4net.Config.XmlConfigurator.Configure(repo, new FileInfo("log4net.config"));
-
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             var configFile = new FileInfo("log4net.config");
             XmlConfigurator.Configure(logRepository, configFile);
