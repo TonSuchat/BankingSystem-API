@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "e9992d5d-3259-400e-9cc3-0b256939be5e",
+		"name": "BankingSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateAccount",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Tony\",\n\t\"lastName\": \"Stark\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/Account/CreateAccount?initialMoney=2000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"Account",
+						"CreateAccount"
+					],
+					"query": [
+						{
+							"key": "initialMoney",
+							"value": "2000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"IBAN\": \"NL02ABNA5136679077\",\n\t\"depositMoney\": 1000,\n\t\"remark\": \"Deposit 1000 money.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/Action/Deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"Action",
+						"Deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fromIBAN\": \"NL05INGB6289099205\",\n\t\"toIBAN\": \"NL02ABNA5136679077\",\n\t\"amount\": 500\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/Action/Transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"Action",
+						"Transfer"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
