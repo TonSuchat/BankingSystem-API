@@ -88,7 +88,7 @@ namespace UnitTest.Controllers
                 Assert.NotNull(jsonResult);
                 Assert.Equal(400, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
-                Assert.Equal(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL, value.Error);
+                Assert.Equal(Entity.Constant.CUSTOMER_IS_NULL, value.Error);
             }
         }
 
@@ -108,7 +108,7 @@ namespace UnitTest.Controllers
                 Assert.NotNull(jsonResult);
                 Assert.Equal(500, jsonResult.StatusCode.GetValueOrDefault());
                 var value = jsonResult.Value as Response;
-                Assert.Equal(Entity.Constant.CREATEACCOUNT_NO_IBAN_LEFT, value.Error);
+                Assert.Equal(Entity.Constant.NO_IBAN_LEFT, value.Error);
             }
         }
 

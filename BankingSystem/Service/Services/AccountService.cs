@@ -4,26 +4,21 @@ using Service.Interfaces;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text;
 using static Entity.Models.AccountModels;
+using System.Linq;
 
 namespace Service.Services
 {
-    public class AccountService : IAccountService
+    public class AccountService : BaseService, IAccountService
     {
 
-        private readonly BankingSystemContext _context;
-
-        public AccountService(BankingSystemContext context)
-        {
-            _context = context;
-        }
+        public AccountService(BankingSystemContext context) : base(context) { }
 
         public async Task<CreateAccountResponse> CreateAccount(Customer customer, decimal initialMoney = 0)
         {
-            if (customer == null || string.IsNullOrEmpty(customer.FirstName) || string.IsNullOrEmpty(customer.LastName)) throw new ArgumentException(Entity.Constant.CREATEACCOUNT_CUSTOMER_IS_NULL);
+            if (customer == null || string.IsNullOrEmpty(customer.FirstName) || string.IsNullOrEmpty(customer.LastName)) throw new ArgumentException(Entity.Constant.CUSTOMER_IS_NULL);
             var masterIBAN = await _context.MasterIBANs.FirstOrDefaultAsync(m => !m.Used);
-            if (masterIBAN == null) throw new Exception(Entity.Constant.CREATEACCOUNT_NO_IBAN_LEFT);
+            if (masterIBAN == null) throw new Exception(Entity.Constant.NO_IBAN_LEFT);
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -55,5 +50,15 @@ namespace Service.Services
             }
         }
 
+        public async Task<Account> GetAccount(string iban)
+        {
+            if (string.IsNullOrEmpty(iban)) throw new ArgumentException(Entity.Constant.IBAN_IS_NULL);
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.IBAN == iban && a.IsActive);
+        }
+
+        public async Task<IList<Account>> GetAccounts()
+        {
+            return await _context.Accounts.Where(a => a.IsActive).ToListAsync();
+        }
     }
 }

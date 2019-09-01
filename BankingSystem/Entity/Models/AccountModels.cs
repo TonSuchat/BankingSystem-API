@@ -22,6 +22,6 @@ namespace Entity.Models
             public string LastName { get; set; }
             public decimal TotalAmount { get; set; }
         }
-
+        
     }
 }

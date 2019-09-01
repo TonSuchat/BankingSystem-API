@@ -69,6 +69,7 @@ namespace API
         private void AddServicesScope(IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IActionService, ActionService>();
         }
         
     }

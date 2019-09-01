@@ -25,5 +25,14 @@ namespace Entity.DBModels
 
         public Account TransferAccount { get; set; }
         public Account ReceiveAccount { get; set; }
+
+        public void Deposit(Account account, decimal amount, decimal fee, string remark = null)
+        {
+            Type = TransactionType.DEPOSIT;
+            ReceiveIBAN = account.IBAN;
+            Amount = amount;
+            Fee = fee;
+            Remark = remark;
+        }
     }
 }
